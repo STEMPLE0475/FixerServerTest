@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <string>
 #include <memory>
+#include <cstdio>
 #include <boost/asio.hpp>
 
 #include "Session.h"
@@ -132,12 +133,8 @@ public:
         notice.pkt_id = NOTICE_CHAT;
         notice.pkt_size = sizeof(PKT_NOTICE_CHAT);
 
-        strncpy_s(notice.senderName,
-            user->GetUsername().c_str(),
-            MAX_NAME_LEN - 1);
-        strncpy_s(notice.message,
-            message.message,
-            MAX_MESSAGE_LEN - 1);
+        std::snprintf(notice.senderName, MAX_NAME_LEN, "%s", user->GetUsername().c_str());
+        std::snprintf(notice.message, MAX_MESSAGE_LEN, "%s", message.message);
 
         // 일단은 전체 브로드캐스트 (원하면 방 단위로 바꿔도 됨)
         session_manager_.BroadcastToAll(&notice, sizeof(notice));
@@ -223,7 +220,7 @@ public:
             PKT_NOTICE_ROOM_INFO notice{};
             notice.pkt_id = NOTICE_ROOM_INFO;
             notice.pkt_size = sizeof(PKT_NOTICE_ROOM_INFO);
-            strncpy_s(notice.roomName, roomName.c_str(), MAX_ROOM_NAME_LEN - 1);
+            std::snprintf(notice.roomName, MAX_ROOM_NAME_LEN, "%s", roomName.c_str());
             notice.playerCount = static_cast<std::uint16_t>(room->GetUserCount());
 
             room->BroadcastMessage(NOTICE_ROOM_INFO, &notice, sizeof(notice));
@@ -261,7 +258,7 @@ public:
             PKT_NOTICE_ROOM_INFO notice{};
             notice.pkt_id = NOTICE_ROOM_INFO;
             notice.pkt_size = sizeof(PKT_NOTICE_ROOM_INFO);
-            strncpy_s(notice.roomName, roomName.c_str(), MAX_ROOM_NAME_LEN - 1);
+            std::snprintf(notice.roomName, MAX_ROOM_NAME_LEN, "%s", roomName.c_str());
             notice.playerCount = static_cast<std::uint16_t>(room->GetUserCount());
 
             room->BroadcastMessage(NOTICE_ROOM_INFO, &notice, sizeof(notice));
@@ -284,9 +281,7 @@ public:
             if (count >= 10)
                 break;
 
-            strncpy_s(response.rooms[count].roomName,
-                room->GetName().c_str(),
-                MAX_ROOM_NAME_LEN - 1);
+            std::snprintf(response.rooms[count].roomName, MAX_ROOM_NAME_LEN, "%s", room->GetName().c_str());
             response.rooms[count].playerCount =
                 static_cast<std::uint16_t>(room->GetUserCount());
             ++count;

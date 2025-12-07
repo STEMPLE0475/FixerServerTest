@@ -1,6 +1,6 @@
 ﻿#include "Room.h"
 #include "Protocol.h"
-#include <cstring>
+#include <cstdio>
 #include <iostream>
 
 void Room::StartTick()
@@ -97,8 +97,8 @@ void Room::BroadcastNotification(const std::string& notification,
     pkt.pkt_id = NOTICE_CHAT;
     pkt.pkt_size = sizeof(PKT_NOTICE_CHAT);
 
-    strncpy_s(pkt.senderName, MAX_NAME_LEN, "SYSTEM", _TRUNCATE);
-    strncpy_s(pkt.message, MAX_MESSAGE_LEN, notification.c_str(), _TRUNCATE);
+    std::snprintf(pkt.senderName, MAX_NAME_LEN, "%s", "SYSTEM");
+    std::snprintf(pkt.message, MAX_MESSAGE_LEN, "%s", notification.c_str());
 
     std::lock_guard<std::mutex> lock(users_mutex_);
     for (const auto& pair : users_)
