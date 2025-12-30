@@ -4,12 +4,13 @@
 #include <memory>
 #include <iostream>
 
-#include "Protocol.h"
+#include "Protocol/Packet.pb.h"
+#include "Protocol/Common.h"
 
-class GameServer;
 class Session;
+class UserManager;
+class RoomManager;
 
-// ===== 패킷 핸들러 인터페이스 =====
 class IPacketHandler
 {
 public:
@@ -17,134 +18,184 @@ public:
 
     virtual void HandlePacket(
         std::shared_ptr<Session> session,
-        const char* data,
-        std::size_t size) = 0;
+        const char* body_data,
+        std::size_t body_size) = 0;
 };
 
-// ===== 패킷 디스패처 =====
 class PacketDispatcher
 {
 public:
-    void RegisterHandler(PACKET_ID pkt_id, std::unique_ptr<IPacketHandler> handler)
+    void RegisterHandler(fixer::PacketId pkt_id, std::unique_ptr<IPacketHandler> handler)
     {
-        handlers_[pkt_id] = std::move(handler);
+        handlers_[static_cast<std::uint16_t>(pkt_id)] = std::move(handler);
     }
 
     void DispatchPacket(std::shared_ptr<Session> session,
         const PACKET_HEADER& header,
-        const char* data, std::size_t size)
+        const char* body, std::size_t body_size)
     {
-        auto it = handlers_.find(static_cast<PACKET_ID>(header.pkt_id));
+        auto it = handlers_.find(header.pkt_id);
         if (it != handlers_.end())
         {
-            it->second->HandlePacket(session, data, size);
+            it->second->HandlePacket(session, body, body_size);
         }
         else
         {
-            std::cout << "Unknown packet id: "
-                << static_cast<uint16_t>(header.pkt_id) << std::endl;
+            std::cout << "Unknown packet id: " << static_cast<uint16_t>(header.pkt_id) << std::endl;
         }
     }
 
 private:
-    std::unordered_map<PACKET_ID, std::unique_ptr<IPacketHandler>> handlers_;
+    std::unordered_map<std::uint16_t, std::unique_ptr<IPacketHandler>> handlers_;
 };
 
-//==================== 개별 핸들러들 ====================
+// 개별 핸들러
 
 class LoginHandler : public IPacketHandler
 {
 public:
-    explicit LoginHandler(GameServer& server) : server_(server) {}
+    explicit LoginHandler(UserManager& users_) : users_(users_) {}
 
     void HandlePacket(std::shared_ptr<Session> session,
-        const char* data, std::size_t size) override;
+        const char* body_data, std::size_t body_size) override;
 
 private:
-    GameServer& server_;
+    UserManager& users_;
+};
+
+class GuestLoginHandler : public IPacketHandler
+{
+public:
+    explicit GuestLoginHandler(UserManager& users_) : users_(users_) {}
+
+    void HandlePacket(std::shared_ptr<Session> session,
+        const char* body_data, std::size_t body_size) override;
+
+private:
+    UserManager& users_;
 };
 
 class LogoutHandler : public IPacketHandler
 {
 public:
-    explicit LogoutHandler(GameServer& server) : server_(server) {}
+    LogoutHandler(UserManager& users, RoomManager& rooms)
+        : users_(users), rooms_(rooms) {
+    }
 
     void HandlePacket(std::shared_ptr<Session> session,
-        const char* data, std::size_t size) override;
+        const char* body,
+        std::size_t body_size) override;
 
 private:
-    GameServer& server_;
+    UserManager& users_;
+    RoomManager& rooms_;
 };
 
 class ChatMessageHandler : public IPacketHandler
 {
 public:
-    explicit ChatMessageHandler(GameServer& server) : server_(server) {}
+    ChatMessageHandler(UserManager& users, RoomManager& rooms)
+        : users_(users), rooms_(rooms) {
+    }
 
     void HandlePacket(std::shared_ptr<Session> session,
-        const char* data, std::size_t size) override;
+        const char* body, std::size_t body_size) override;
 
 private:
-    GameServer& server_;
+    UserManager& users_;
+    RoomManager& rooms_;
 };
 
 class CreateRoomHandler : public IPacketHandler
 {
 public:
-    explicit CreateRoomHandler(GameServer& server) : server_(server) {}
+    CreateRoomHandler(UserManager& users, RoomManager& rooms)
+        : users_(users), rooms_(rooms) {
+    }
 
     void HandlePacket(std::shared_ptr<Session> session,
-        const char* data, std::size_t size) override;
+        const char* body,
+        std::size_t body_size) override;
 
 private:
-    GameServer& server_;
+    UserManager& users_;
+    RoomManager& rooms_;
 };
 
 class EnterRoomHandler : public IPacketHandler
 {
 public:
-    explicit EnterRoomHandler(GameServer& server) : server_(server) {}
+    EnterRoomHandler(UserManager& users, RoomManager& rooms)
+        : users_(users), rooms_(rooms) {
+    }
 
     void HandlePacket(std::shared_ptr<Session> session,
-        const char* data, std::size_t size) override;
+        const char* body, std::size_t body_size) override;
 
 private:
-    GameServer& server_;
+    UserManager& users_;
+    RoomManager& rooms_;
 };
 
 class LeaveRoomHandler : public IPacketHandler
 {
 public:
-    explicit LeaveRoomHandler(GameServer& server) : server_(server) {}
+    LeaveRoomHandler(UserManager& users, RoomManager& rooms)
+        : users_(users), rooms_(rooms) {
+    }
 
     void HandlePacket(std::shared_ptr<Session> session,
-        const char* data, std::size_t size) override;
+        const char* body,
+        std::size_t body_size) override;
 
 private:
-    GameServer& server_;
+    UserManager& users_;
+    RoomManager& rooms_;
 };
 
 class RoomListHandler : public IPacketHandler
 {
 public:
-    explicit RoomListHandler(GameServer& server) : server_(server) {}
+    explicit RoomListHandler(RoomManager& rooms)
+        : rooms_(rooms) {
+    }
 
     void HandlePacket(std::shared_ptr<Session> session,
-        const char* data, std::size_t size) override;
+        const char* body,
+        std::size_t body_size) override;
 
 private:
-    GameServer& server_;
+    RoomManager& rooms_;
 };
 
 class PlayerStateHandler : public IPacketHandler
 {
 public:
-    explicit PlayerStateHandler(GameServer& server) : server_(server) {}
+    PlayerStateHandler(UserManager& users, RoomManager& rooms)
+        : users_(users), rooms_(rooms) {
+    }
 
     void HandlePacket(std::shared_ptr<Session> session,
-        const char* data, std::size_t size) override;
+        const char* body,
+        std::size_t body_size) override;
 
 private:
-    GameServer& server_;
+    UserManager& users_;
+    RoomManager& rooms_;
 };
 
+class RoomPlayerNameHandler : public IPacketHandler
+{
+public:
+    RoomPlayerNameHandler(UserManager& users, RoomManager& rooms)
+        : users_(users), rooms_(rooms) {
+    }
+
+    void HandlePacket(std::shared_ptr<Session> session,
+        const char* body,
+        std::size_t body_size) override;
+
+private:
+    UserManager& users_;
+    RoomManager& rooms_;
+};

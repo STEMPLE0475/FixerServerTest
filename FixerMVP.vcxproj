@@ -126,13 +126,15 @@
   <ItemGroup>
     <ClCompile Include="FixerMVP.cpp" />
     <ClCompile Include="PacketHandler.cpp" />
+    <ClCompile Include="Protocol\Packet.pb.cc" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="Session.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameServer.h" />
     <ClInclude Include="PacketHandler.h" />
-    <ClInclude Include="Protocol.h" />
+    <ClInclude Include="Protocol\Common.h" />
+    <ClInclude Include="Protocol\Packet.pb.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="Session.h" />

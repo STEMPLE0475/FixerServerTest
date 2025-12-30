@@ -1,5 +1,4 @@
 ﻿#include "Room.h"
-#include "Protocol.h"
 #include <cstdio>
 #include <iostream>
 
@@ -21,6 +20,9 @@ bool Room::AddUser(std::shared_ptr<User> user)
             return false; // 이미 방에 있음
 
         users_[user->GetId()] = user;
+        for (auto& [id, u] : users_) {
+            u->isStateChanged = true; // 새 유저를 위해 모든 유저의 상태를 '변경됨'으로 표시
+        }
         userCount = users_.size();
     }
 
@@ -62,85 +64,177 @@ bool Room::RemoveUser(uint32_t user_id)
     return true;
 }
 
-void Room::BroadcastMessage(PACKET_ID /*pkt_id*/, const void* data, size_t size,
-    uint32_t sender_id)
+void Room::BroadcastChat(const std::string& sender_name, const std::string& message,  std::uint32_t exclude_user_id)
 {
-    std::vector<std::shared_ptr<Session>> targets;
+    fixer::NoticeChat msg;
+    msg.set_sender_name(sender_name);
+    msg.set_message(message);
 
-    {
-        std::lock_guard<std::mutex> lock(users_mutex_);
-        targets.reserve(users_.size());
-
-        for (const auto& pair : users_)
-        {
-            if (sender_id != 0 && pair.first == sender_id) continue;
-
-            auto session = pair.second->GetSession().lock();
-            if (session && pair.second->IsOnline())
-            {
-                targets.push_back(session);
-            }
-        }
-    }
-
-    for (auto& session : targets)
-    {
-        session->SendMessage(data, size);
-    }
+    if (exclude_user_id == 0)
+        SendPacketToAll(fixer::PacketId::NOTICE_CHAT, msg);
+    else
+        SendPacketToAllExcept(exclude_user_id, fixer::PacketId::NOTICE_CHAT, msg);
 }
 
-void Room::BroadcastNotification(const std::string& notification,
-    uint32_t exclude_user_id)
+void Room::BroadcastNotification(const std::string& notification, uint32_t exclude_user_id)
 {
-    // SYSTEM 채팅 패킷으로 브로드캐스트
-    PKT_NOTICE_CHAT pkt{};
-    pkt.pkt_id = NOTICE_CHAT;
-    pkt.pkt_size = sizeof(PKT_NOTICE_CHAT);
+    fixer::NoticeChat msg;
+    msg.set_sender_name("SYSTEM");
+    msg.set_message(notification);
 
-    std::snprintf(pkt.senderName, MAX_NAME_LEN, "%s", "SYSTEM");
-    std::snprintf(pkt.message, MAX_MESSAGE_LEN, "%s", notification.c_str());
-
-    std::lock_guard<std::mutex> lock(users_mutex_);
-    for (const auto& pair : users_)
-    {
-        if (pair.first == exclude_user_id)
-            continue;
-
-        auto user = pair.second;
-        auto session = user->GetSession().lock();
-        if (session && user->IsOnline())
-        {
-            session->SendMessage(&pkt, sizeof(pkt));
-        }
-    }
-
+    if (exclude_user_id == 0)
+        SendPacketToAll(fixer::PacketId::NOTICE_CHAT, msg);
+    else
+        SendPacketToAllExcept(exclude_user_id, fixer::PacketId::NOTICE_CHAT, msg);
 }
 
 void Room::BroadcastPlayerStates()
 {
-    PKT_NOTICE_PLAYER_STATE pkt{};
-    pkt.pkt_id = NOTICE_PLAYER_STATE;
-    pkt.count = 0;
+    fixer::NoticePlayerState msg;
+    bool has_changes = false;
 
     {
         std::lock_guard<std::mutex> lock(users_mutex_);
 
-        for (const auto& [user_id, user] : users_)
+        for (auto& [user_id, user] : users_)
         {
-            if (pkt.count >= MAX_PLAYERS_PER_ROOM)
-                break;
+            // 1. 상태가 변한 유저만 체크
+            if (user->isStateChanged)
+            {
+                auto* entry = msg.add_players();
+                entry->set_user_id(user_id);
 
-            auto& entry = pkt.players[pkt.count];
-            entry.userId = user_id;
-            entry.state = user->GetCharacterState();
-            ++pkt.count;
-            std::cout << "[ID]" << entry.userId << " [Pox]" << entry.state.pos_x << "," << entry.state.pos_y << std::endl;
+                // 2. 현재 상태 복사 및 플래그 초기화
+                const fixer::CharacterState& cs = user->GetCharacterState();
+                *entry->mutable_state() = cs;
+
+                user->isStateChanged = false; // 플래그 끄기
+                has_changes = true;
+            }
         }
     }
 
-    pkt.pkt_size = sizeof(PKT_NOTICE_PLAYER_STATE);
+    // 3. 변한 플레이어가 한 명이라도 있을 때만 전송
+    if (has_changes)
+    {
+        SendPacketToAll(fixer::PacketId::NOTICE_PLAYER_STATE, msg);
+    }
+}
 
-    BroadcastMessage(NOTICE_PLAYER_STATE, &pkt, sizeof(pkt));
+void Room::BroadcastRoomInfo()
+{
+    fixer::NoticeRoomInfo msg;
+
+    {
+        std::lock_guard<std::mutex> lock(users_mutex_);
+
+        for (auto& [user_id, user] : users_)
+        {
+            if (!user) continue;
+
+            auto* p = msg.add_players();  
+            p->set_user_id(user_id);
+            p->set_user_name(user->GetUsername()); 
+        }
+    }
+    std::cout << "NOtice room info" << std::endl;
+    SendPacketToAll(fixer::PacketId::NOTICE_ROOM_INFO, msg);
+}
+
+
+void Room::SendPacketToAll(fixer::PacketId pkt_id, const google::protobuf::Message& msg)
+{
+    auto packet = BuildPacket(pkt_id, msg);
+    if (packet.empty())
+        return;
+
+    std::vector<std::shared_ptr<Session>> targets;
+    {
+        std::lock_guard<std::mutex> lock(users_mutex_);
+        targets.reserve(users_.size());
+
+        for (auto& [user_id, user] : users_)
+        {
+            auto session = user->GetSession().lock();
+            if (session && user->IsOnline())
+                targets.push_back(session);
+        }
+    }
+
+    SendPacketToSessions(targets, packet);
+}
+
+void Room::SendPacketToAllExcept(uint32_t exclude_user_id, fixer::PacketId pkt_id, const google::protobuf::Message& msg)
+{
+    auto packet = BuildPacket(pkt_id, msg);
+    if (packet.empty())
+        return;
+
+    std::vector<std::shared_ptr<Session>> targets;
+    {
+        std::lock_guard<std::mutex> lock(users_mutex_);
+        targets.reserve(users_.size());
+
+        for (auto& [user_id, user] : users_)
+        {
+            if (user_id == exclude_user_id)
+                continue;
+
+            auto session = user->GetSession().lock();
+            if (session && user->IsOnline())
+                targets.push_back(session);
+        }
+    }
+
+    SendPacketToSessions(targets, packet);
+}
+
+void Room::SendPacketToUser(uint32_t user_id, fixer::PacketId pkt_id, const google::protobuf::Message& msg)
+{
+    auto packet = BuildPacket(pkt_id, msg);
+    if (packet.empty())
+        return;
+
+    std::shared_ptr<Session> target_session;
+    {
+        std::lock_guard<std::mutex> lock(users_mutex_);
+
+        auto it = users_.find(user_id);
+        if (it == users_.end())
+            return;
+
+        target_session = it->second->GetSession().lock();
+        if (!target_session || !it->second->IsOnline())
+            return;
+    }
+
+    target_session->SendMessage(packet.data(), packet.size());
+}
+
+void Room::SendPacketToUsers(const std::vector<uint32_t>& user_ids, fixer::PacketId pkt_id, const google::protobuf::Message& msg)
+{
+    auto packet = BuildPacket(pkt_id, msg);
+    if (packet.empty())
+        return;
+
+    std::vector<std::shared_ptr<Session>> targets;
+    {
+        std::lock_guard<std::mutex> lock(users_mutex_);
+
+        for (uint32_t uid : user_ids)
+        {
+            auto it = users_.find(uid);
+            if (it == users_.end())
+                continue;
+
+            auto session = it->second->GetSession().lock();
+            if (session && it->second->IsOnline())
+                targets.push_back(session);
+        }
+    }
+
+    if (!targets.empty())
+        SendPacketToSessions(targets, packet);
 }
 
 std::vector<std::shared_ptr<User>> Room::GetUserList() const
@@ -154,6 +248,43 @@ std::vector<std::shared_ptr<User>> Room::GetUserList() const
     }
 
     return user_list;
+}
+
+std::vector<char> Room::BuildPacket(fixer::PacketId pkt_id, const google::protobuf::Message& msg)
+{
+    std::string body;
+    if (!msg.SerializeToString(&body))
+    {
+        std::cout << "BuildPacket SerializeToString failed, pkt_id="
+            << static_cast<int>(pkt_id) << "\n";
+        return {};
+    }
+
+    std::uint16_t pkt_size =
+        static_cast<std::uint16_t>(sizeof(PACKET_HEADER) + body.size());
+
+    std::vector<char> buffer(pkt_size);
+
+    auto* header = reinterpret_cast<PACKET_HEADER*>(buffer.data());
+    header->pkt_id = static_cast<std::uint16_t>(pkt_id);
+    header->pkt_size = pkt_size;
+
+    std::memcpy(buffer.data() + sizeof(PACKET_HEADER),
+        body.data(), body.size());
+
+    return buffer;
+}
+
+void Room::SendPacketToSessions(const std::vector<std::shared_ptr<Session>>& sessions, const std::vector<char>& packet)
+{
+    if (packet.empty())
+        return;
+
+    for (auto& s : sessions)
+    {
+        if (!s) continue;
+        s->SendMessage(packet.data(), packet.size());
+    }
 }
 
 void Room::ScheduleNextTick()

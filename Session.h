@@ -9,7 +9,8 @@
 
 #include <boost/asio.hpp>
 
-#include "Protocol.h"
+#include "Protocol/Common.h"
+#include "Protocol/Packet.pb.h"
 
 class GameServer; // 전방 선언
 

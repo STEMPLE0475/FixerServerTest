@@ -28,12 +28,12 @@
     <ClCompile Include="PacketHandler.cpp">
       <Filter>Service</Filter>
     </ClCompile>
+    <ClCompile Include="Protocol\Packet.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameServer.h">
-      <Filter>Service</Filter>
-    </ClInclude>
-    <ClInclude Include="Protocol.h">
       <Filter>Service</Filter>
     </ClInclude>
     <ClInclude Include="Room.h">
@@ -56,6 +56,12 @@
     </ClInclude>
     <ClInclude Include="PacketHandler.h">
       <Filter>Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocol\Common.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocol\Packet.pb.h">
+      <Filter>Protocol</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

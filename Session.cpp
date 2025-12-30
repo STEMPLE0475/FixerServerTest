@@ -1,6 +1,6 @@
 ﻿#include "Session.h"
 #include "GameServer.h"
-#include "Protocol.h"
+#include "Protocol/Packet.pb.h"
 
 #include <cstring>
 
@@ -133,7 +133,7 @@ void Session::ProcessPacket(const char* data, std::size_t size)
 
     const auto& header = *reinterpret_cast<const PACKET_HEADER*>(data);
 
-    // packet header의 입력된 size에 맞게 잘 들어왔는지 검사
+    // 패킷 크기 검증
     if (header.pkt_size != size ||
         header.pkt_size > MAX_RECEIVE_BUFFER_LEN)
     {
@@ -143,9 +143,12 @@ void Session::ProcessPacket(const char* data, std::size_t size)
         return;
     }
 
-    // GamerServer의 Dispatcher을 반환하여, 패킷에 대한 정보를 전달
+    // body 파싱
+    const char* body = data + sizeof(PACKET_HEADER);
+    std::size_t body_size = size - sizeof(PACKET_HEADER);
+
     server_.GetPacketDispatcher().DispatchPacket(
-        shared_from_this(), header, data, size);
+        shared_from_this(), header, body, body_size);
 }
 
 void Session::SendMessage(const void* data, std::size_t size)
