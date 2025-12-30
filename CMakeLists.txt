@@ -21,6 +21,7 @@ endif()
 # 3) Boost.Asio (Linux/AWS 쪽)
 #   - AWS EC2에서: sudo apt-get install libboost-all-dev (우분투 기준)
 find_package(Boost 1.70 REQUIRED COMPONENTS system)
+find_package(Protobuf REQUIRED)
 
 # 4) 소스 파일들
 set(SOURCES
@@ -28,6 +29,7 @@ set(SOURCES
     Session.cpp    
     PacketHandler.cpp  
     Room.cpp  
+    Protocol/Packet.pb.cc
     # 필요하다면 여기다가 추가 cpp들 계속 나열
 )
 
@@ -37,13 +39,15 @@ add_executable(FixerServer ${SOURCES})
 target_include_directories(FixerServer
     PRIVATE
         ${Boost_INCLUDE_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}   # Protocol.h, GameServer.h, Room.h 등 
+        ${CMAKE_CURRENT_SOURCE_DIR}   # UserManager.h, SessionManager.h, Room.h, PacketHandler,  등 
+        ${CMAKE_CURRENT_SOURCE_DIR}/Protocol # Common, Packet.pb.h
 )
 
 # 6) 라이브러리 링크
 target_link_libraries(FixerServer
     PRIVATE
         Boost::system
+        protobuf::libprotobuf
         pthread             # 리눅스에서 쓰레드
 )
 
