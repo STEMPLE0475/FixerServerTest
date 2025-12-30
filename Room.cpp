@@ -292,7 +292,7 @@ void Room::ScheduleNextTick()
     auto self = shared_from_this();
 
     using namespace std::chrono_literals;
-    tick_timer_.expires_after(50ms); // 수정 예정
+    tick_timer_.expires_after(30min); // 수정 예정
     tick_timer_.async_wait(
         [self](const boost::system::error_code& ec) {
             if (ec) return;
