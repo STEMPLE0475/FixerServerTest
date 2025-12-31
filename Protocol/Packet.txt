@@ -1,0 +1,162 @@
+syntax = "proto3";
+
+package fixer;
+
+enum PacketId {
+  PACKET_ID_INVALID   = 0;
+
+  REQ_LOGIN           = 10;
+  RES_LOGIN           = 11;
+  REQ_LOGOUT          = 12;
+  RES_LOGOUT          = 13;
+  REQ_GUEST_LOGIN     = 14;
+
+  REQ_CREATE_ROOM     = 20;
+  RES_CREATE_ROOM     = 21;
+
+  REQ_ENTER_ROOM      = 22;
+  RES_ENTER_ROOM      = 23;
+  REQ_LEAVE_ROOM      = 24;
+  RES_LEAVE_ROOM      = 25;
+
+  NOTICE_ROOM_INFO    = 26;
+
+  RES_ROOM_LIST       = 27;
+  REQ_ROOM_LIST       = 28;
+
+  REQ_CHAT            = 30;
+  NOTICE_CHAT         = 31;
+
+  REQ_PLAYER_STATE    = 40;
+  NOTICE_PLAYER_STATE = 41;
+
+  NOTICE_GAME_CLEAR   = 50;
+}
+
+message CharacterState {
+  float  pos_x        = 1;
+  float  pos_y        = 2;
+  sint32 facing_dir   = 3;  // -1, 1 등
+  uint32 action_state = 4;  // 클라/서버 공통 enum 값 (PlayerStateForNetwork 등)
+}
+
+
+// 로그인 요청 (PKT_REQ_LOGIN)
+message ReqLogin {
+  string user_id  = 1;
+  string password = 2;
+}
+
+// 닉네임만으로 로그인 요청 (PKT_REQ_GUEST_LOGIN)
+message ReqGuestLogin {
+  string nickname = 1;
+}
+
+// 로그인 응답 (PKT_RES_LOGIN)
+message ResLogin {
+  uint32 user_id    = 1;
+  bool   is_success = 2;
+}
+
+// 로그아웃 요청 (PKT_REQ_LOGOUT)
+message ReqLogout {
+  string user_id = 1;
+}
+
+// 로그아웃 응답 (PKT_RES_LOGOUT)
+message ResLogout {
+  bool is_success = 1;
+}
+
+
+// 방 생성 요청 (PKT_REQ_CREATE_ROOM)
+message ReqCreateRoom {
+  string room_name = 1;
+  string room_password = 2;
+  bool is_pvp = 3;
+}
+
+// 방 생성 응답 (PKT_RES_CREATE_ROOM)
+message ResCreateRoom {
+  bool is_success = 1;
+  uint32 room_id = 2;
+}
+
+// 방 입장 요청 (PKT_REQ_ENTER_ROOM)
+message ReqEnterRoom {
+  uint32 room_id = 1;
+  string password = 2;
+}
+
+// 방 입장 응답 (PKT_RES_ENTER_ROOM)
+message ResEnterRoom {
+  bool is_success = 1;
+}
+
+// 방 퇴장 요청 (PKT_REQ_LEAVE_ROOM)
+message ReqLeaveRoom {
+  string room_name = 1;
+}
+
+// 방 퇴장 응답 (PKT_RES_LEAVE_ROOM)
+message ResLeaveRoom {
+  bool is_success = 1;
+}
+
+// 방 정보 브로드캐스트 (PKT_NOTICE_ROOM_INFO)
+message NoticeRoomInfo {
+  string room_name    = 1;
+  uint32 player_count = 2;
+}
+
+
+// 방 리스트 요청 (PKT_REQ_ROOM_LIST)
+message ReqRoomList {
+  // 추가 필드 필요 시 확장
+}
+
+// 방 리스트 응답 (PKT_RES_ROOM_LIST)
+message ResRoomList {
+  message RoomInfo {
+    string room_name = 1;
+    uint32 room_id = 2;
+    uint32 player_count = 3;
+  }
+
+  repeated RoomInfo rooms = 1; // 기존 rooms[10]
+}
+
+
+// 채팅 요청 (PKT_REQ_CHAT)
+message ReqChat {
+  string message = 1;
+}
+
+// 채팅 브로드캐스트 (PKT_NOTICE_CHAT + SYSTEM 메시지 등)
+message NoticeChat {
+  string sender_name = 1; // "SYSTEM" 포함
+  string message     = 2;
+}
+
+
+// 플레이어 상태 요청 (PKT_REQ_PLAYER_STATE)
+message ReqPlayerState {
+  CharacterState state = 1;
+}
+
+// 브로드캐스트용 엔트리 (기존 PlayerStateEntry)
+message PlayerStateEntry {
+  uint32 user_id = 1;
+  CharacterState state = 2;
+}
+
+// 플레이어 상태 브로드캐스트 (PKT_NOTICE_PLAYER_STATE)
+message NoticePlayerState {
+  repeated PlayerStateEntry players = 1;
+}
+
+
+// 게임 클리어 브로드캐스트 (PKT_NOTICE_GAME_CLEAR)
+message NoticeGameClear {
+  string winner_name = 1;
+}
