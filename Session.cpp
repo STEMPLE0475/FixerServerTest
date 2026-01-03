@@ -13,6 +13,7 @@ Session::Session(tcp::socket socket, GameServer& server)
     : socket_(std::move(socket))
     , server_(server)
 {
+    
 }
 
 Session::~Session() = default;

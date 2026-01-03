@@ -87,6 +87,13 @@ private:
             {
                 if (!ec)
                 {
+                    boost::system::error_code opt_ec;
+                    new_session->GetSocket().set_option(tcp::no_delay(true), opt_ec);
+
+                    if (opt_ec)
+                        std::cout << "set_option(TCP_NODELAY) failed: " << opt_ec.message() << std::endl;
+
+
                     session_manager_.AddSession(new_session);
                     new_session->Start();
                 }

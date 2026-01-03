@@ -101,6 +101,7 @@ void Room::BroadcastPlayerStates()
             // 1. 상태가 변한 유저만 체크
             if (user->isStateChanged)
             {
+                std::cout << user_id << "move send" << std::endl; 
                 auto* entry = msg.add_players();
                 entry->set_user_id(user_id);
 
@@ -290,15 +291,14 @@ void Room::SendPacketToSessions(const std::vector<std::shared_ptr<Session>>& ses
 void Room::ScheduleNextTick()
 {
     auto self = shared_from_this();
-
+    
     using namespace std::chrono_literals;
     tick_timer_.expires_after(30ms); 
     tick_timer_.async_wait(
         [self](const boost::system::error_code& ec) {
             if (ec) return;
-
+            std::cout << "Room Tick Start" << std::endl;
             self->BroadcastPlayerStates();
-
             self->ScheduleNextTick();
         });
 }

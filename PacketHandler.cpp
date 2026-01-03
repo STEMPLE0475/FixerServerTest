@@ -416,7 +416,7 @@ void PlayerStateHandler::HandlePacket(std::shared_ptr<Session> session,
     if (!room)
         return;
 
-    user->UpdateCharacterState(req.state());
+    user->UpdateCharacterState(req.state()); 
 }
 
 /*
