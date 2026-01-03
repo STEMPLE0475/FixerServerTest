@@ -157,9 +157,6 @@ void LogoutHandler::HandlePacket(std::shared_ptr<Session> session,
     res.set_is_success(true);
 
     SendProtoResponse(session, fixer::PacketId::RES_LOGOUT, res);
-
-    // 로그아웃 후 세션을 끊고 싶다면 여기서 Close:
-    // session->Close();
 }
 
 void ChatMessageHandler::HandlePacket(std::shared_ptr<Session> session,

@@ -65,6 +65,7 @@ public:
                 for (auto& room : rooms)
                 {
                     room->RemoveUser(user_id);
+                    room->BroadcastRoomInfo();
                 }
 
                 std::cout << "User disconnected: " << user->GetUsername()
