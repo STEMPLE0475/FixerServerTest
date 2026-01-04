@@ -31,6 +31,9 @@ enum PacketId {
   NOTICE_PLAYER_STATE = 41;
 
   NOTICE_GAME_CLEAR   = 50;
+
+  REQ_PLAYER_INTERACT = 60;
+  NOTICE_PLAYER_INTERACT = 61;
 }
 
 message CharacterState {
@@ -163,4 +166,19 @@ message NoticePlayerState {
 // 게임 클리어 브로드캐스트 (PKT_NOTICE_GAME_CLEAR)
 message NoticeGameClear {
   string winner_name = 1;
+}
+
+// 플레이어 상호작용 요청 (PLAYER_INTERACT) type : 1이면 공격, 2이면 패링
+message ReqPlayerInteract{
+  sint32 type = 1;
+  uint32 trigger_user_id = 2;
+  uint32 target_user_id = 3;
+}
+
+
+// 플레이어 상호작용 결과 브로드캐스트 (NOTICE_PLAYER_INTERACT)
+message NoticePlayerInteract{
+  sint32 type = 1;
+  uint32 trigger_user_id = 2;
+  uint32 target_user_id = 3;
 }

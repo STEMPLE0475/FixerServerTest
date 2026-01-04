@@ -142,6 +142,28 @@ void Room::BroadcastRoomInfo()
     SendPacketToAll(fixer::PacketId::NOTICE_ROOM_INFO, msg);
 }
 
+/*
+void Room::BroadcastPlayerInteract()
+{
+    fixer::NoticePlayerInteract msg;
+
+    {
+        std::lock_guard<std::mutex> lock(users_mutex_);
+
+        for (auto& [user_id, user] : users_)
+        {
+            if (!user) continue;
+
+            auto* p = msg.add_players();
+            p->set_user_id(user_id);
+            p->set_user_name(user->GetUsername());
+        }
+    }
+    //std::cout << "Notice room info" << std::endl;
+    SendPacketToAll(fixer::PacketId::NOTICE_ROOM_INFO, msg);
+}
+*/
+
 
 void Room::SendPacketToAll(fixer::PacketId pkt_id, const google::protobuf::Message& msg)
 {

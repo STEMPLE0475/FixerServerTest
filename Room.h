@@ -44,6 +44,7 @@ public:
     void BroadcastNotification(const std::string& notification, uint32_t exclude_user_id);
     void BroadcastPlayerStates();
     void BroadcastRoomInfo();
+    //void BroadcastPlayerInteract(); 
 
     // Send Packet
     void SendPacketToAll(fixer::PacketId pkt_id, const google::protobuf::Message& msg);

@@ -199,3 +199,19 @@ private:
     UserManager& users_;
     RoomManager& rooms_;
 };
+
+class PlayerInteractHandler : public IPacketHandler
+{
+public:
+    PlayerInteractHandler(UserManager& users, RoomManager& rooms)
+        : users_(users), rooms_(rooms) {
+    }
+
+    void HandlePacket(std::shared_ptr<Session> session,
+        const char* body,
+        std::size_t body_size) override;
+
+private:
+    UserManager& users_;
+    RoomManager& rooms_;
+};

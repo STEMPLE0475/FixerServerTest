@@ -139,6 +139,10 @@ private:
         packet_dispatcher_.RegisterHandler(
             fixer::PacketId::REQ_PLAYER_STATE,
             std::make_unique<PlayerStateHandler>(user_manager_, room_manager_));
+
+        packet_dispatcher_.RegisterHandler(
+            fixer::PacketId::REQ_PLAYER_INTERACT,
+            std::make_unique<PlayerInteractHandler>(user_manager_, room_manager_));
     }
 
 

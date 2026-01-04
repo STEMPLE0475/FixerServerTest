@@ -389,8 +389,6 @@ void RoomListHandler::HandlePacket(std::shared_ptr<Session> session,
         entry->set_room_id(room->GetId());
         entry->set_player_count(static_cast<uint32_t>(room->GetUserCount()));
     }
-
-    std::cout << res.rooms_size() << std::endl;
     SendProtoResponse(session, fixer::PacketId::RES_ROOM_LIST, res);
 }
 
@@ -416,8 +414,28 @@ void PlayerStateHandler::HandlePacket(std::shared_ptr<Session> session,
     user->UpdateCharacterState(req.state()); 
 }
 
-/*
-fixer::CharacterState last_character_state_{};
-    fixer::CharacterState cur_character_state_{};
-    bool isStateChanged = false;
-*/
+void PlayerInteractHandler::HandlePacket(std::shared_ptr<Session> session,
+    const char* body, std::size_t body_size)
+{
+    if (!session->IsAuthenticated())
+        return;
+
+    fixer::ReqPlayerInteract req;
+    if (!req.ParseFromArray(body, static_cast<int>(body_size)))
+        return;
+
+    fixer::NoticePlayerInteract res;
+    res.set_type(req.type());
+    res.set_trigger_user_id(req.trigger_user_id());
+    res.set_target_user_id(req.target_user_id());
+
+    auto room = rooms_.FindRoomByUserId(req.trigger_user_id());
+    if (!room)
+        return;
+
+    //std::cout << req.target_user_id() << "을 향해 "<< req.type() <<" 패킷 전송" << std::endl;
+    room->SendPacketToAll(fixer::NOTICE_PLAYER_INTERACT, res);
+    // 실제는 room 내부에서 입력받고 대기하고 실행하도록 수정해야함. (공격 후 패링 대기)
+    // 일단 공격 기능이 잘 작동하는지 보려고 에코 기능만 추가
+}
+

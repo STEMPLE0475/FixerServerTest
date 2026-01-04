@@ -63,6 +63,9 @@ extern NoticeChatDefaultTypeInternal _NoticeChat_default_instance_;
 class NoticeGameClear;
 struct NoticeGameClearDefaultTypeInternal;
 extern NoticeGameClearDefaultTypeInternal _NoticeGameClear_default_instance_;
+class NoticePlayerInteract;
+struct NoticePlayerInteractDefaultTypeInternal;
+extern NoticePlayerInteractDefaultTypeInternal _NoticePlayerInteract_default_instance_;
 class NoticePlayerState;
 struct NoticePlayerStateDefaultTypeInternal;
 extern NoticePlayerStateDefaultTypeInternal _NoticePlayerState_default_instance_;
@@ -96,6 +99,9 @@ extern ReqLoginDefaultTypeInternal _ReqLogin_default_instance_;
 class ReqLogout;
 struct ReqLogoutDefaultTypeInternal;
 extern ReqLogoutDefaultTypeInternal _ReqLogout_default_instance_;
+class ReqPlayerInteract;
+struct ReqPlayerInteractDefaultTypeInternal;
+extern ReqPlayerInteractDefaultTypeInternal _ReqPlayerInteract_default_instance_;
 class ReqPlayerState;
 struct ReqPlayerStateDefaultTypeInternal;
 extern ReqPlayerStateDefaultTypeInternal _ReqPlayerState_default_instance_;
@@ -151,6 +157,8 @@ enum PacketId : int {
   REQ_PLAYER_STATE = 40,
   NOTICE_PLAYER_STATE = 41,
   NOTICE_GAME_CLEAR = 50,
+  REQ_PLAYER_INTERACT = 60,
+  NOTICE_PLAYER_INTERACT = 61,
   PacketId_INT_MIN_SENTINEL_DO_NOT_USE_ =
       std::numeric_limits<::int32_t>::min(),
   PacketId_INT_MAX_SENTINEL_DO_NOT_USE_ =
@@ -160,8 +168,8 @@ enum PacketId : int {
 bool PacketId_IsValid(int value);
 extern const uint32_t PacketId_internal_data_[];
 constexpr PacketId PacketId_MIN = static_cast<PacketId>(0);
-constexpr PacketId PacketId_MAX = static_cast<PacketId>(50);
-constexpr int PacketId_ARRAYSIZE = 50 + 1;
+constexpr PacketId PacketId_MAX = static_cast<PacketId>(61);
+constexpr int PacketId_ARRAYSIZE = 61 + 1;
 const ::google::protobuf::EnumDescriptor*
 PacketId_descriptor();
 template <typename T>
@@ -1516,6 +1524,220 @@ class ReqRoomList final : public ::google::protobuf::internal::ZeroFieldsBase
                           const ReqRoomList& from_msg);
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
+  friend struct ::TableStruct_Packet_2eproto;
+};
+// -------------------------------------------------------------------
+
+class ReqPlayerInteract final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:fixer.ReqPlayerInteract) */ {
+ public:
+  inline ReqPlayerInteract() : ReqPlayerInteract(nullptr) {}
+  ~ReqPlayerInteract() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(ReqPlayerInteract* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(ReqPlayerInteract));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR ReqPlayerInteract(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline ReqPlayerInteract(const ReqPlayerInteract& from) : ReqPlayerInteract(nullptr, from) {}
+  inline ReqPlayerInteract(ReqPlayerInteract&& from) noexcept
+      : ReqPlayerInteract(nullptr, std::move(from)) {}
+  inline ReqPlayerInteract& operator=(const ReqPlayerInteract& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ReqPlayerInteract& operator=(ReqPlayerInteract&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ReqPlayerInteract& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ReqPlayerInteract* internal_default_instance() {
+    return reinterpret_cast<const ReqPlayerInteract*>(
+        &_ReqPlayerInteract_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 23;
+  friend void swap(ReqPlayerInteract& a, ReqPlayerInteract& b) { a.Swap(&b); }
+  inline void Swap(ReqPlayerInteract* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ReqPlayerInteract* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ReqPlayerInteract* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<ReqPlayerInteract>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const ReqPlayerInteract& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const ReqPlayerInteract& from) { ReqPlayerInteract::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(ReqPlayerInteract* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "fixer.ReqPlayerInteract"; }
+
+ protected:
+  explicit ReqPlayerInteract(::google::protobuf::Arena* arena);
+  ReqPlayerInteract(::google::protobuf::Arena* arena, const ReqPlayerInteract& from);
+  ReqPlayerInteract(::google::protobuf::Arena* arena, ReqPlayerInteract&& from) noexcept
+      : ReqPlayerInteract(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kTypeFieldNumber = 1,
+    kTriggerUserIdFieldNumber = 2,
+    kTargetUserIdFieldNumber = 3,
+  };
+  // sint32 type = 1;
+  void clear_type() ;
+  ::int32_t type() const;
+  void set_type(::int32_t value);
+
+  private:
+  ::int32_t _internal_type() const;
+  void _internal_set_type(::int32_t value);
+
+  public:
+  // uint32 trigger_user_id = 2;
+  void clear_trigger_user_id() ;
+  ::uint32_t trigger_user_id() const;
+  void set_trigger_user_id(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_trigger_user_id() const;
+  void _internal_set_trigger_user_id(::uint32_t value);
+
+  public:
+  // uint32 target_user_id = 3;
+  void clear_target_user_id() ;
+  ::uint32_t target_user_id() const;
+  void set_target_user_id(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_target_user_id() const;
+  void _internal_set_target_user_id(::uint32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:fixer.ReqPlayerInteract)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      2, 3, 0,
+      0, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const ReqPlayerInteract& from_msg);
+    ::int32_t type_;
+    ::uint32_t trigger_user_id_;
+    ::uint32_t target_user_id_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
   friend struct ::TableStruct_Packet_2eproto;
 };
 // -------------------------------------------------------------------
@@ -3152,6 +3374,220 @@ class NoticeRoomInfo_PlayerInfo final : public ::google::protobuf::Message
                           const NoticeRoomInfo_PlayerInfo& from_msg);
     ::google::protobuf::internal::ArenaStringPtr user_name_;
     ::uint32_t user_id_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Packet_2eproto;
+};
+// -------------------------------------------------------------------
+
+class NoticePlayerInteract final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:fixer.NoticePlayerInteract) */ {
+ public:
+  inline NoticePlayerInteract() : NoticePlayerInteract(nullptr) {}
+  ~NoticePlayerInteract() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(NoticePlayerInteract* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(NoticePlayerInteract));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR NoticePlayerInteract(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline NoticePlayerInteract(const NoticePlayerInteract& from) : NoticePlayerInteract(nullptr, from) {}
+  inline NoticePlayerInteract(NoticePlayerInteract&& from) noexcept
+      : NoticePlayerInteract(nullptr, std::move(from)) {}
+  inline NoticePlayerInteract& operator=(const NoticePlayerInteract& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline NoticePlayerInteract& operator=(NoticePlayerInteract&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const NoticePlayerInteract& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const NoticePlayerInteract* internal_default_instance() {
+    return reinterpret_cast<const NoticePlayerInteract*>(
+        &_NoticePlayerInteract_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 24;
+  friend void swap(NoticePlayerInteract& a, NoticePlayerInteract& b) { a.Swap(&b); }
+  inline void Swap(NoticePlayerInteract* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(NoticePlayerInteract* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  NoticePlayerInteract* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<NoticePlayerInteract>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const NoticePlayerInteract& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const NoticePlayerInteract& from) { NoticePlayerInteract::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(NoticePlayerInteract* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "fixer.NoticePlayerInteract"; }
+
+ protected:
+  explicit NoticePlayerInteract(::google::protobuf::Arena* arena);
+  NoticePlayerInteract(::google::protobuf::Arena* arena, const NoticePlayerInteract& from);
+  NoticePlayerInteract(::google::protobuf::Arena* arena, NoticePlayerInteract&& from) noexcept
+      : NoticePlayerInteract(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kTypeFieldNumber = 1,
+    kTriggerUserIdFieldNumber = 2,
+    kTargetUserIdFieldNumber = 3,
+  };
+  // sint32 type = 1;
+  void clear_type() ;
+  ::int32_t type() const;
+  void set_type(::int32_t value);
+
+  private:
+  ::int32_t _internal_type() const;
+  void _internal_set_type(::int32_t value);
+
+  public:
+  // uint32 trigger_user_id = 2;
+  void clear_trigger_user_id() ;
+  ::uint32_t trigger_user_id() const;
+  void set_trigger_user_id(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_trigger_user_id() const;
+  void _internal_set_trigger_user_id(::uint32_t value);
+
+  public:
+  // uint32 target_user_id = 3;
+  void clear_target_user_id() ;
+  ::uint32_t target_user_id() const;
+  void set_target_user_id(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_target_user_id() const;
+  void _internal_set_target_user_id(::uint32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:fixer.NoticePlayerInteract)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      2, 3, 0,
+      0, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const NoticePlayerInteract& from_msg);
+    ::int32_t type_;
+    ::uint32_t trigger_user_id_;
+    ::uint32_t target_user_id_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -6279,6 +6715,146 @@ inline void NoticeGameClear::set_allocated_winner_name(std::string* value) {
     _impl_.winner_name_.Set("", GetArena());
   }
   // @@protoc_insertion_point(field_set_allocated:fixer.NoticeGameClear.winner_name)
+}
+
+// -------------------------------------------------------------------
+
+// ReqPlayerInteract
+
+// sint32 type = 1;
+inline void ReqPlayerInteract::clear_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.type_ = 0;
+}
+inline ::int32_t ReqPlayerInteract::type() const {
+  // @@protoc_insertion_point(field_get:fixer.ReqPlayerInteract.type)
+  return _internal_type();
+}
+inline void ReqPlayerInteract::set_type(::int32_t value) {
+  _internal_set_type(value);
+  // @@protoc_insertion_point(field_set:fixer.ReqPlayerInteract.type)
+}
+inline ::int32_t ReqPlayerInteract::_internal_type() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.type_;
+}
+inline void ReqPlayerInteract::_internal_set_type(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.type_ = value;
+}
+
+// uint32 trigger_user_id = 2;
+inline void ReqPlayerInteract::clear_trigger_user_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.trigger_user_id_ = 0u;
+}
+inline ::uint32_t ReqPlayerInteract::trigger_user_id() const {
+  // @@protoc_insertion_point(field_get:fixer.ReqPlayerInteract.trigger_user_id)
+  return _internal_trigger_user_id();
+}
+inline void ReqPlayerInteract::set_trigger_user_id(::uint32_t value) {
+  _internal_set_trigger_user_id(value);
+  // @@protoc_insertion_point(field_set:fixer.ReqPlayerInteract.trigger_user_id)
+}
+inline ::uint32_t ReqPlayerInteract::_internal_trigger_user_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.trigger_user_id_;
+}
+inline void ReqPlayerInteract::_internal_set_trigger_user_id(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.trigger_user_id_ = value;
+}
+
+// uint32 target_user_id = 3;
+inline void ReqPlayerInteract::clear_target_user_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_user_id_ = 0u;
+}
+inline ::uint32_t ReqPlayerInteract::target_user_id() const {
+  // @@protoc_insertion_point(field_get:fixer.ReqPlayerInteract.target_user_id)
+  return _internal_target_user_id();
+}
+inline void ReqPlayerInteract::set_target_user_id(::uint32_t value) {
+  _internal_set_target_user_id(value);
+  // @@protoc_insertion_point(field_set:fixer.ReqPlayerInteract.target_user_id)
+}
+inline ::uint32_t ReqPlayerInteract::_internal_target_user_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.target_user_id_;
+}
+inline void ReqPlayerInteract::_internal_set_target_user_id(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_user_id_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// NoticePlayerInteract
+
+// sint32 type = 1;
+inline void NoticePlayerInteract::clear_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.type_ = 0;
+}
+inline ::int32_t NoticePlayerInteract::type() const {
+  // @@protoc_insertion_point(field_get:fixer.NoticePlayerInteract.type)
+  return _internal_type();
+}
+inline void NoticePlayerInteract::set_type(::int32_t value) {
+  _internal_set_type(value);
+  // @@protoc_insertion_point(field_set:fixer.NoticePlayerInteract.type)
+}
+inline ::int32_t NoticePlayerInteract::_internal_type() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.type_;
+}
+inline void NoticePlayerInteract::_internal_set_type(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.type_ = value;
+}
+
+// uint32 trigger_user_id = 2;
+inline void NoticePlayerInteract::clear_trigger_user_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.trigger_user_id_ = 0u;
+}
+inline ::uint32_t NoticePlayerInteract::trigger_user_id() const {
+  // @@protoc_insertion_point(field_get:fixer.NoticePlayerInteract.trigger_user_id)
+  return _internal_trigger_user_id();
+}
+inline void NoticePlayerInteract::set_trigger_user_id(::uint32_t value) {
+  _internal_set_trigger_user_id(value);
+  // @@protoc_insertion_point(field_set:fixer.NoticePlayerInteract.trigger_user_id)
+}
+inline ::uint32_t NoticePlayerInteract::_internal_trigger_user_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.trigger_user_id_;
+}
+inline void NoticePlayerInteract::_internal_set_trigger_user_id(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.trigger_user_id_ = value;
+}
+
+// uint32 target_user_id = 3;
+inline void NoticePlayerInteract::clear_target_user_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_user_id_ = 0u;
+}
+inline ::uint32_t NoticePlayerInteract::target_user_id() const {
+  // @@protoc_insertion_point(field_get:fixer.NoticePlayerInteract.target_user_id)
+  return _internal_target_user_id();
+}
+inline void NoticePlayerInteract::set_target_user_id(::uint32_t value) {
+  _internal_set_target_user_id(value);
+  // @@protoc_insertion_point(field_set:fixer.NoticePlayerInteract.target_user_id)
+}
+inline ::uint32_t NoticePlayerInteract::_internal_target_user_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.target_user_id_;
+}
+inline void NoticePlayerInteract::_internal_set_target_user_id(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_user_id_ = value;
 }
 
 #ifdef __GNUC__
