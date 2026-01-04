@@ -209,5 +209,5 @@ private:
     std::atomic<uint32_t> next_room_id_;
 
     boost::asio::steady_timer room_log_timer_;
-    std::chrono::seconds log_interval_{ 120 };
+    std::chrono::seconds log_interval_{ 3600 };
 };
