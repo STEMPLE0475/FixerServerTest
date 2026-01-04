@@ -101,7 +101,7 @@ void Room::BroadcastPlayerStates()
             // 1. 상태가 변한 유저만 체크
             if (user->isStateChanged)
             {
-                std::cout << user_id << "move send" << std::endl; 
+                //std::cout << user_id << "move send" << std::endl; 
                 auto* entry = msg.add_players();
                 entry->set_user_id(user_id);
 
@@ -138,7 +138,7 @@ void Room::BroadcastRoomInfo()
             p->set_user_name(user->GetUsername()); 
         }
     }
-    std::cout << "NOtice room info" << std::endl;
+    //std::cout << "Notice room info" << std::endl;
     SendPacketToAll(fixer::PacketId::NOTICE_ROOM_INFO, msg);
 }
 
@@ -290,14 +290,17 @@ void Room::SendPacketToSessions(const std::vector<std::shared_ptr<Session>>& ses
 
 void Room::ScheduleNextTick()
 {
-    auto self = shared_from_this();
+    std::weak_ptr<Room> weakSelf = shared_from_this();
     
     using namespace std::chrono_literals;
     tick_timer_.expires_after(30ms); 
     tick_timer_.async_wait(
-        [self](const boost::system::error_code& ec) {
+        [weakSelf](const boost::system::error_code& ec) {
             if (ec) return;
-            std::cout << "Room Tick Start" << std::endl;
+
+            auto self = weakSelf.lock();
+            if (!self) return; 
+
             self->BroadcastPlayerStates();
             self->ScheduleNextTick();
         });
