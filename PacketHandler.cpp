@@ -69,6 +69,7 @@ void LoginHandler::HandlePacket(std::shared_ptr<Session> session,
 
             res.set_user_id(user->GetId());
             res.set_is_success(true);
+            //res.set_user_name()
 
             std::cout << "User login: " << user->GetUsername()
                 << " (ID: " << user->GetId() << ")" << std::endl;
@@ -103,6 +104,7 @@ void GuestLoginHandler::HandlePacket(std::shared_ptr<Session> session,
             session->SetAuthenticated(true);
 
             res.set_user_id(user->GetId());
+            res.set_user_name(nickname);
             res.set_is_success(true);
 
             std::cout << "User login: " << user->GetUsername()
@@ -424,18 +426,24 @@ void PlayerInteractHandler::HandlePacket(std::shared_ptr<Session> session,
     if (!req.ParseFromArray(body, static_cast<int>(body_size)))
         return;
 
-    fixer::NoticePlayerInteract res;
-    res.set_type(req.type());
-    res.set_trigger_user_id(req.trigger_user_id());
-    res.set_target_user_id(req.target_user_id());
-
     auto room = rooms_.FindRoomByUserId(req.trigger_user_id());
     if (!room)
         return;
 
-    //std::cout << req.target_user_id() << "을 향해 "<< req.type() <<" 패킷 전송" << std::endl;
-    room->SendPacketToAll(fixer::NOTICE_PLAYER_INTERACT, res);
-    // 실제는 room 내부에서 입력받고 대기하고 실행하도록 수정해야함. (공격 후 패링 대기)
-    // 일단 공격 기능이 잘 작동하는지 보려고 에코 기능만 추가
+    if (!room->GetIsPvp()) {
+        return;
+    }
+    
+    switch (req.type()) {
+    case 1: // 공격
+        std::cout << "attack" << std::endl;
+        room->AddAttackRequest(req.trigger_user_id(), req.target_user_id());
+        break;
+
+    case 2: // 패링
+        std::cout << "parry" << std::endl;
+        room->TryParry(req.trigger_user_id());
+        break;
+    }
 }
 

@@ -5,6 +5,7 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+#include <queue>
 #include <unordered_map>
 
 #include "User.h"
@@ -22,10 +23,13 @@ public:
         , io_context_(io_context)
         , tick_timer_(io_context)
     {
+        tick_ = 0;
     }
     
     // Room Manage
     uint32_t GetId() const { return id_; }
+    uint32_t GetTick() const { return tick_; }
+    bool GetIsPvp() const { return isPvp_; }
     const std::string& GetName() const { return name_; }
     const std::string& GetPassword() const { return password_; }
 
@@ -38,6 +42,12 @@ public:
     bool AddUser(std::shared_ptr<User> user);
     bool RemoveUser(uint32_t user_id);
     std::vector<std::shared_ptr<User>> GetUserList() const;
+
+    // PVP
+    void AddAttackRequest(uint32_t trigger_id, uint32_t target_id);
+    void TryParry(uint32_t trigger_id);
+    void ProcessParry();
+    void ProcessExpiredAttack();
 
     // Broadcast Message
     void BroadcastChat(const std::string& sender_name, const std::string& message, std::uint32_t exclude_user_id);
@@ -52,8 +62,10 @@ public:
     void SendPacketToUser(uint32_t user_id, fixer::PacketId pkt_id, const google::protobuf::Message& msg);
     void SendPacketToUsers(const std::vector<uint32_t>& user_ids, fixer::PacketId pkt_id, const google::protobuf::Message& msg);
 
-    // Timer
+    // Tick & Timer
     void StartTick();
+    void Update();
+    void ScheduleNextTick();
 
 private:
     // Room Manage
@@ -67,12 +79,20 @@ private:
     std::unordered_map<uint32_t, std::shared_ptr<User>> users_;
     mutable std::mutex users_mutex_;
 
+    // PVP
+    std::unordered_map<uint32_t, AttackRequest> attackRequestMap;
+    std::vector<AttackRequest> parrySuccessList;
+    std::priority_queue<std::pair<uint32_t, uint32_t>,
+        std::vector<std::pair<uint32_t, uint32_t>>,
+        std::greater<std::pair<uint32_t, uint32_t>>> attackRequestQueueByExpireTick;; // (expire_tick, target_user_id)
+    mutable std::mutex interact_mutex_;
+
     // Send Packet Utility
     std::vector<char> BuildPacket(fixer::PacketId pkt_id, const google::protobuf::Message& msg);
     void SendPacketToSessions(const std::vector<std::shared_ptr<Session>>& sessions, const std::vector<char>& packet);
 
-    // Timer
-    void ScheduleNextTick();
+    // Tick & Timer
+    uint32_t tick_;
     boost::asio::io_context& io_context_;
     boost::asio::steady_timer tick_timer_;
 };

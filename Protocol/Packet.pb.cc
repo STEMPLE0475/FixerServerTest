@@ -82,7 +82,10 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 
 inline constexpr ResLogin::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : user_id_{0u},
+      : user_name_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        user_id_{0u},
         is_success_{false},
         _cached_size_{0} {}
 
@@ -736,6 +739,7 @@ const ::uint32_t
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
         PROTOBUF_FIELD_OFFSET(::fixer::ResLogin, _impl_.user_id_),
+        PROTOBUF_FIELD_OFFSET(::fixer::ResLogin, _impl_.user_name_),
         PROTOBUF_FIELD_OFFSET(::fixer::ResLogin, _impl_.is_success_),
         ~0u,  // no _has_bits_
         PROTOBUF_FIELD_OFFSET(::fixer::ReqLogout, _internal_metadata_),
@@ -949,27 +953,27 @@ static const ::_pbi::MigrationSchema
         {12, -1, -1, sizeof(::fixer::ReqLogin)},
         {22, -1, -1, sizeof(::fixer::ReqGuestLogin)},
         {31, -1, -1, sizeof(::fixer::ResLogin)},
-        {41, -1, -1, sizeof(::fixer::ReqLogout)},
-        {50, -1, -1, sizeof(::fixer::ResLogout)},
-        {59, -1, -1, sizeof(::fixer::ReqCreateRoom)},
-        {70, -1, -1, sizeof(::fixer::ResCreateRoom)},
-        {80, -1, -1, sizeof(::fixer::ReqEnterRoom)},
-        {90, -1, -1, sizeof(::fixer::ResEnterRoom)},
-        {99, -1, -1, sizeof(::fixer::ReqLeaveRoom)},
-        {108, -1, -1, sizeof(::fixer::ResLeaveRoom)},
-        {117, -1, -1, sizeof(::fixer::NoticeRoomInfo_PlayerInfo)},
-        {127, -1, -1, sizeof(::fixer::NoticeRoomInfo)},
-        {136, -1, -1, sizeof(::fixer::ReqRoomList)},
-        {144, -1, -1, sizeof(::fixer::ResRoomList_RoomInfo)},
-        {155, -1, -1, sizeof(::fixer::ResRoomList)},
-        {164, -1, -1, sizeof(::fixer::ReqChat)},
-        {173, -1, -1, sizeof(::fixer::NoticeChat)},
-        {183, 192, -1, sizeof(::fixer::ReqPlayerState)},
-        {193, 203, -1, sizeof(::fixer::PlayerStateEntry)},
-        {205, -1, -1, sizeof(::fixer::NoticePlayerState)},
-        {214, -1, -1, sizeof(::fixer::NoticeGameClear)},
-        {223, -1, -1, sizeof(::fixer::ReqPlayerInteract)},
-        {234, -1, -1, sizeof(::fixer::NoticePlayerInteract)},
+        {42, -1, -1, sizeof(::fixer::ReqLogout)},
+        {51, -1, -1, sizeof(::fixer::ResLogout)},
+        {60, -1, -1, sizeof(::fixer::ReqCreateRoom)},
+        {71, -1, -1, sizeof(::fixer::ResCreateRoom)},
+        {81, -1, -1, sizeof(::fixer::ReqEnterRoom)},
+        {91, -1, -1, sizeof(::fixer::ResEnterRoom)},
+        {100, -1, -1, sizeof(::fixer::ReqLeaveRoom)},
+        {109, -1, -1, sizeof(::fixer::ResLeaveRoom)},
+        {118, -1, -1, sizeof(::fixer::NoticeRoomInfo_PlayerInfo)},
+        {128, -1, -1, sizeof(::fixer::NoticeRoomInfo)},
+        {137, -1, -1, sizeof(::fixer::ReqRoomList)},
+        {145, -1, -1, sizeof(::fixer::ResRoomList_RoomInfo)},
+        {156, -1, -1, sizeof(::fixer::ResRoomList)},
+        {165, -1, -1, sizeof(::fixer::ReqChat)},
+        {174, -1, -1, sizeof(::fixer::NoticeChat)},
+        {184, 193, -1, sizeof(::fixer::ReqPlayerState)},
+        {194, 204, -1, sizeof(::fixer::PlayerStateEntry)},
+        {206, -1, -1, sizeof(::fixer::NoticePlayerState)},
+        {215, -1, -1, sizeof(::fixer::NoticeGameClear)},
+        {224, -1, -1, sizeof(::fixer::ReqPlayerInteract)},
+        {235, -1, -1, sizeof(::fixer::NoticePlayerInteract)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
     &::fixer::_CharacterState_default_instance_._instance,
@@ -1004,54 +1008,54 @@ const char descriptor_table_protodef_Packet_2eproto[] ABSL_ATTRIBUTE_SECTION_VAR
     "\r\n\005pos_x\030\001 \001(\002\022\r\n\005pos_y\030\002 \001(\002\022\022\n\nfacing_"
     "dir\030\003 \001(\021\022\024\n\014action_state\030\004 \001(\r\"-\n\010ReqLo"
     "gin\022\017\n\007user_id\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\"!"
-    "\n\rReqGuestLogin\022\020\n\010nickname\030\001 \001(\t\"/\n\010Res"
-    "Login\022\017\n\007user_id\030\001 \001(\r\022\022\n\nis_success\030\002 \001"
-    "(\010\"\034\n\tReqLogout\022\017\n\007user_id\030\001 \001(\t\"\037\n\tResL"
-    "ogout\022\022\n\nis_success\030\001 \001(\010\"I\n\rReqCreateRo"
-    "om\022\021\n\troom_name\030\001 \001(\t\022\025\n\rroom_password\030\002"
-    " \001(\t\022\016\n\006is_pvp\030\003 \001(\010\"4\n\rResCreateRoom\022\022\n"
-    "\nis_success\030\001 \001(\010\022\017\n\007room_id\030\002 \001(\r\"1\n\014Re"
-    "qEnterRoom\022\017\n\007room_id\030\001 \001(\r\022\020\n\010password\030"
-    "\002 \001(\t\"\"\n\014ResEnterRoom\022\022\n\nis_success\030\001 \001("
-    "\010\"!\n\014ReqLeaveRoom\022\021\n\troom_name\030\001 \001(\t\"\"\n\014"
-    "ResLeaveRoom\022\022\n\nis_success\030\001 \001(\010\"u\n\016Noti"
-    "ceRoomInfo\0221\n\007players\030\001 \003(\0132 .fixer.Noti"
-    "ceRoomInfo.PlayerInfo\0320\n\nPlayerInfo\022\017\n\007u"
-    "ser_id\030\001 \001(\r\022\021\n\tuser_name\030\002 \001(\t\"\r\n\013ReqRo"
-    "omList\"\177\n\013ResRoomList\022*\n\005rooms\030\001 \003(\0132\033.f"
-    "ixer.ResRoomList.RoomInfo\032D\n\010RoomInfo\022\021\n"
-    "\troom_name\030\001 \001(\t\022\017\n\007room_id\030\002 \001(\r\022\024\n\014pla"
-    "yer_count\030\003 \001(\r\"\032\n\007ReqChat\022\017\n\007message\030\001 "
-    "\001(\t\"2\n\nNoticeChat\022\023\n\013sender_name\030\001 \001(\t\022\017"
-    "\n\007message\030\002 \001(\t\"6\n\016ReqPlayerState\022$\n\005sta"
-    "te\030\001 \001(\0132\025.fixer.CharacterState\"I\n\020Playe"
-    "rStateEntry\022\017\n\007user_id\030\001 \001(\r\022$\n\005state\030\002 "
-    "\001(\0132\025.fixer.CharacterState\"=\n\021NoticePlay"
-    "erState\022(\n\007players\030\001 \003(\0132\027.fixer.PlayerS"
-    "tateEntry\"&\n\017NoticeGameClear\022\023\n\013winner_n"
-    "ame\030\001 \001(\t\"R\n\021ReqPlayerInteract\022\014\n\004type\030\001"
-    " \001(\021\022\027\n\017trigger_user_id\030\002 \001(\r\022\026\n\016target_"
-    "user_id\030\003 \001(\r\"U\n\024NoticePlayerInteract\022\014\n"
-    "\004type\030\001 \001(\021\022\027\n\017trigger_user_id\030\002 \001(\r\022\026\n\016"
-    "target_user_id\030\003 \001(\r*\304\003\n\010PacketId\022\025\n\021PAC"
-    "KET_ID_INVALID\020\000\022\r\n\tREQ_LOGIN\020\n\022\r\n\tRES_L"
-    "OGIN\020\013\022\016\n\nREQ_LOGOUT\020\014\022\016\n\nRES_LOGOUT\020\r\022\023"
-    "\n\017REQ_GUEST_LOGIN\020\016\022\023\n\017REQ_CREATE_ROOM\020\024"
-    "\022\023\n\017RES_CREATE_ROOM\020\025\022\022\n\016REQ_ENTER_ROOM\020"
-    "\026\022\022\n\016RES_ENTER_ROOM\020\027\022\022\n\016REQ_LEAVE_ROOM\020"
-    "\030\022\022\n\016RES_LEAVE_ROOM\020\031\022\024\n\020NOTICE_ROOM_INF"
-    "O\020\032\022\021\n\rRES_ROOM_LIST\020\033\022\021\n\rREQ_ROOM_LIST\020"
-    "\034\022\014\n\010REQ_CHAT\020\036\022\017\n\013NOTICE_CHAT\020\037\022\024\n\020REQ_"
-    "PLAYER_STATE\020(\022\027\n\023NOTICE_PLAYER_STATE\020)\022"
-    "\025\n\021NOTICE_GAME_CLEAR\0202\022\027\n\023REQ_PLAYER_INT"
-    "ERACT\020<\022\032\n\026NOTICE_PLAYER_INTERACT\020=b\006pro"
-    "to3"
+    "\n\rReqGuestLogin\022\020\n\010nickname\030\001 \001(\t\"B\n\010Res"
+    "Login\022\017\n\007user_id\030\001 \001(\r\022\021\n\tuser_name\030\002 \001("
+    "\t\022\022\n\nis_success\030\003 \001(\010\"\034\n\tReqLogout\022\017\n\007us"
+    "er_id\030\001 \001(\t\"\037\n\tResLogout\022\022\n\nis_success\030\001"
+    " \001(\010\"I\n\rReqCreateRoom\022\021\n\troom_name\030\001 \001(\t"
+    "\022\025\n\rroom_password\030\002 \001(\t\022\016\n\006is_pvp\030\003 \001(\010\""
+    "4\n\rResCreateRoom\022\022\n\nis_success\030\001 \001(\010\022\017\n\007"
+    "room_id\030\002 \001(\r\"1\n\014ReqEnterRoom\022\017\n\007room_id"
+    "\030\001 \001(\r\022\020\n\010password\030\002 \001(\t\"\"\n\014ResEnterRoom"
+    "\022\022\n\nis_success\030\001 \001(\010\"!\n\014ReqLeaveRoom\022\021\n\t"
+    "room_name\030\001 \001(\t\"\"\n\014ResLeaveRoom\022\022\n\nis_su"
+    "ccess\030\001 \001(\010\"u\n\016NoticeRoomInfo\0221\n\007players"
+    "\030\001 \003(\0132 .fixer.NoticeRoomInfo.PlayerInfo"
+    "\0320\n\nPlayerInfo\022\017\n\007user_id\030\001 \001(\r\022\021\n\tuser_"
+    "name\030\002 \001(\t\"\r\n\013ReqRoomList\"\177\n\013ResRoomList"
+    "\022*\n\005rooms\030\001 \003(\0132\033.fixer.ResRoomList.Room"
+    "Info\032D\n\010RoomInfo\022\021\n\troom_name\030\001 \001(\t\022\017\n\007r"
+    "oom_id\030\002 \001(\r\022\024\n\014player_count\030\003 \001(\r\"\032\n\007Re"
+    "qChat\022\017\n\007message\030\001 \001(\t\"2\n\nNoticeChat\022\023\n\013"
+    "sender_name\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\"6\n\016Re"
+    "qPlayerState\022$\n\005state\030\001 \001(\0132\025.fixer.Char"
+    "acterState\"I\n\020PlayerStateEntry\022\017\n\007user_i"
+    "d\030\001 \001(\r\022$\n\005state\030\002 \001(\0132\025.fixer.Character"
+    "State\"=\n\021NoticePlayerState\022(\n\007players\030\001 "
+    "\003(\0132\027.fixer.PlayerStateEntry\"&\n\017NoticeGa"
+    "meClear\022\023\n\013winner_name\030\001 \001(\t\"R\n\021ReqPlaye"
+    "rInteract\022\014\n\004type\030\001 \001(\021\022\027\n\017trigger_user_"
+    "id\030\002 \001(\r\022\026\n\016target_user_id\030\003 \001(\r\"U\n\024Noti"
+    "cePlayerInteract\022\014\n\004type\030\001 \001(\021\022\027\n\017trigge"
+    "r_user_id\030\002 \001(\r\022\026\n\016target_user_id\030\003 \001(\r*"
+    "\304\003\n\010PacketId\022\025\n\021PACKET_ID_INVALID\020\000\022\r\n\tR"
+    "EQ_LOGIN\020\n\022\r\n\tRES_LOGIN\020\013\022\016\n\nREQ_LOGOUT\020"
+    "\014\022\016\n\nRES_LOGOUT\020\r\022\023\n\017REQ_GUEST_LOGIN\020\016\022\023"
+    "\n\017REQ_CREATE_ROOM\020\024\022\023\n\017RES_CREATE_ROOM\020\025"
+    "\022\022\n\016REQ_ENTER_ROOM\020\026\022\022\n\016RES_ENTER_ROOM\020\027"
+    "\022\022\n\016REQ_LEAVE_ROOM\020\030\022\022\n\016RES_LEAVE_ROOM\020\031"
+    "\022\024\n\020NOTICE_ROOM_INFO\020\032\022\021\n\rRES_ROOM_LIST\020"
+    "\033\022\021\n\rREQ_ROOM_LIST\020\034\022\014\n\010REQ_CHAT\020\036\022\017\n\013NO"
+    "TICE_CHAT\020\037\022\024\n\020REQ_PLAYER_STATE\020(\022\027\n\023NOT"
+    "ICE_PLAYER_STATE\020)\022\025\n\021NOTICE_GAME_CLEAR\020"
+    "2\022\027\n\023REQ_PLAYER_INTERACT\020<\022\032\n\026NOTICE_PLA"
+    "YER_INTERACT\020=b\006proto3"
 };
 static ::absl::once_flag descriptor_table_Packet_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_Packet_2eproto = {
     false,
     false,
-    1803,
+    1822,
     descriptor_table_protodef_Packet_2eproto,
     "Packet.proto",
     &descriptor_table_Packet_2eproto_once,
@@ -1861,15 +1865,40 @@ ResLogin::ResLogin(::google::protobuf::Arena* arena)
   SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:fixer.ResLogin)
 }
+inline PROTOBUF_NDEBUG_INLINE ResLogin::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from, const ::fixer::ResLogin& from_msg)
+      : user_name_(arena, from.user_name_),
+        _cached_size_{0} {}
+
 ResLogin::ResLogin(
-    ::google::protobuf::Arena* arena, const ResLogin& from)
-    : ResLogin(arena) {
-  MergeFrom(from);
+    ::google::protobuf::Arena* arena,
+    const ResLogin& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  ResLogin* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, user_id_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, user_id_),
+           offsetof(Impl_, is_success_) -
+               offsetof(Impl_, user_id_) +
+               sizeof(Impl_::is_success_));
+
+  // @@protoc_insertion_point(copy_constructor:fixer.ResLogin)
 }
 inline PROTOBUF_NDEBUG_INLINE ResLogin::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : _cached_size_{0} {}
+      : user_name_(arena),
+        _cached_size_{0} {}
 
 inline void ResLogin::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
@@ -1888,6 +1917,7 @@ inline void ResLogin::SharedDtor(MessageLite& self) {
   ResLogin& this_ = static_cast<ResLogin&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.user_name_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -1896,7 +1926,7 @@ inline void* ResLogin::PlacementNew_(const void*, void* mem,
   return ::new (mem) ResLogin(arena);
 }
 constexpr auto ResLogin::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(ResLogin),
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(ResLogin),
                                             alignof(ResLogin));
 }
 PROTOBUF_CONSTINIT
@@ -1927,15 +1957,15 @@ const ::google::protobuf::internal::ClassData* ResLogin::GetClassData() const {
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 0, 2> ResLogin::_table_ = {
+const ::_pbi::TcParseTable<2, 3, 0, 32, 2> ResLogin::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    2, 8,  // max_field_number, fast_idx_mask
+    3, 24,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967292,  // skipmap
+    4294967288,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    2,  // num_field_entries
+    3,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     _class_data_.base(),
@@ -1945,24 +1975,34 @@ const ::_pbi::TcParseTable<1, 2, 0, 0, 2> ResLogin::_table_ = {
     ::_pbi::TcParser::GetTable<::fixer::ResLogin>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // bool is_success = 2;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ResLogin, _impl_.is_success_), 63>(),
-     {16, 63, 0, PROTOBUF_FIELD_OFFSET(ResLogin, _impl_.is_success_)}},
+    {::_pbi::TcParser::MiniParse, {}},
     // uint32 user_id = 1;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(ResLogin, _impl_.user_id_), 63>(),
      {8, 63, 0, PROTOBUF_FIELD_OFFSET(ResLogin, _impl_.user_id_)}},
+    // string user_name = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(ResLogin, _impl_.user_name_)}},
+    // bool is_success = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ResLogin, _impl_.is_success_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(ResLogin, _impl_.is_success_)}},
   }}, {{
     65535, 65535
   }}, {{
     // uint32 user_id = 1;
     {PROTOBUF_FIELD_OFFSET(ResLogin, _impl_.user_id_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUInt32)},
-    // bool is_success = 2;
+    // string user_name = 2;
+    {PROTOBUF_FIELD_OFFSET(ResLogin, _impl_.user_name_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // bool is_success = 3;
     {PROTOBUF_FIELD_OFFSET(ResLogin, _impl_.is_success_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kBool)},
   }},
   // no aux_entries
   {{
+    "\16\0\11\0\0\0\0\0"
+    "fixer.ResLogin"
+    "user_name"
   }},
 };
 
@@ -1973,6 +2013,7 @@ PROTOBUF_NOINLINE void ResLogin::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.user_name_.ClearToEmpty();
   ::memset(&_impl_.user_id_, 0, static_cast<::size_t>(
       reinterpret_cast<char*>(&_impl_.is_success_) -
       reinterpret_cast<char*>(&_impl_.user_id_)) + sizeof(_impl_.is_success_));
@@ -2001,11 +2042,19 @@ PROTOBUF_NOINLINE void ResLogin::Clear() {
                 1, this_._internal_user_id(), target);
           }
 
-          // bool is_success = 2;
+          // string user_name = 2;
+          if (!this_._internal_user_name().empty()) {
+            const std::string& _s = this_._internal_user_name();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "fixer.ResLogin.user_name");
+            target = stream->WriteStringMaybeAliased(2, _s, target);
+          }
+
+          // bool is_success = 3;
           if (this_._internal_is_success() != 0) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteBoolToArray(
-                2, this_._internal_is_success(), target);
+                3, this_._internal_is_success(), target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -2033,12 +2082,17 @@ PROTOBUF_NOINLINE void ResLogin::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
+            // string user_name = 2;
+            if (!this_._internal_user_name().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_user_name());
+            }
             // uint32 user_id = 1;
             if (this_._internal_user_id() != 0) {
               total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
                   this_._internal_user_id());
             }
-            // bool is_success = 2;
+            // bool is_success = 3;
             if (this_._internal_is_success() != 0) {
               total_size += 2;
             }
@@ -2055,6 +2109,9 @@ void ResLogin::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from._internal_user_name().empty()) {
+    _this->_internal_set_user_name(from._internal_user_name());
+  }
   if (from._internal_user_id() != 0) {
     _this->_impl_.user_id_ = from._impl_.user_id_;
   }
@@ -2074,7 +2131,10 @@ void ResLogin::CopyFrom(const ResLogin& from) {
 
 void ResLogin::InternalSwap(ResLogin* PROTOBUF_RESTRICT other) {
   using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.user_name_, &other->_impl_.user_name_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(ResLogin, _impl_.is_success_)
       + sizeof(ResLogin::_impl_.is_success_)

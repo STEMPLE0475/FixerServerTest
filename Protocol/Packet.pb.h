@@ -745,9 +745,26 @@ class ResLogin final : public ::google::protobuf::Message
 
   // accessors -------------------------------------------------------
   enum : int {
+    kUserNameFieldNumber = 2,
     kUserIdFieldNumber = 1,
-    kIsSuccessFieldNumber = 2,
+    kIsSuccessFieldNumber = 3,
   };
+  // string user_name = 2;
+  void clear_user_name() ;
+  const std::string& user_name() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_user_name(Arg_&& arg, Args_... args);
+  std::string* mutable_user_name();
+  PROTOBUF_NODISCARD std::string* release_user_name();
+  void set_allocated_user_name(std::string* value);
+
+  private:
+  const std::string& _internal_user_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_user_name(
+      const std::string& value);
+  std::string* _internal_mutable_user_name();
+
+  public:
   // uint32 user_id = 1;
   void clear_user_id() ;
   ::uint32_t user_id() const;
@@ -758,7 +775,7 @@ class ResLogin final : public ::google::protobuf::Message
   void _internal_set_user_id(::uint32_t value);
 
   public:
-  // bool is_success = 2;
+  // bool is_success = 3;
   void clear_is_success() ;
   bool is_success() const;
   void set_is_success(bool value);
@@ -773,8 +790,8 @@ class ResLogin final : public ::google::protobuf::Message
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      1, 2, 0,
-      0, 2>
+      2, 3, 0,
+      32, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -791,6 +808,7 @@ class ResLogin final : public ::google::protobuf::Message
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const ResLogin& from_msg);
+    ::google::protobuf::internal::ArenaStringPtr user_name_;
     ::uint32_t user_id_;
     bool is_success_;
     ::google::protobuf::internal::CachedSize _cached_size_;
@@ -5510,7 +5528,55 @@ inline void ResLogin::_internal_set_user_id(::uint32_t value) {
   _impl_.user_id_ = value;
 }
 
-// bool is_success = 2;
+// string user_name = 2;
+inline void ResLogin::clear_user_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.user_name_.ClearToEmpty();
+}
+inline const std::string& ResLogin::user_name() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:fixer.ResLogin.user_name)
+  return _internal_user_name();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ResLogin::set_user_name(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.user_name_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:fixer.ResLogin.user_name)
+}
+inline std::string* ResLogin::mutable_user_name() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_user_name();
+  // @@protoc_insertion_point(field_mutable:fixer.ResLogin.user_name)
+  return _s;
+}
+inline const std::string& ResLogin::_internal_user_name() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.user_name_.Get();
+}
+inline void ResLogin::_internal_set_user_name(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.user_name_.Set(value, GetArena());
+}
+inline std::string* ResLogin::_internal_mutable_user_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.user_name_.Mutable( GetArena());
+}
+inline std::string* ResLogin::release_user_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:fixer.ResLogin.user_name)
+  return _impl_.user_name_.Release();
+}
+inline void ResLogin::set_allocated_user_name(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.user_name_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.user_name_.IsDefault()) {
+    _impl_.user_name_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:fixer.ResLogin.user_name)
+}
+
+// bool is_success = 3;
 inline void ResLogin::clear_is_success() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.is_success_ = false;

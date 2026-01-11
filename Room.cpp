@@ -7,6 +7,12 @@ void Room::StartTick()
     ScheduleNextTick();
 }
 
+void Room::Update()
+{
+    ProcessParry();
+    ProcessExpiredAttack();
+}
+
 bool Room::AddUser(std::shared_ptr<User> user)
 {
     size_t userCount = 0;
@@ -26,6 +32,7 @@ bool Room::AddUser(std::shared_ptr<User> user)
         userCount = users_.size();
     }
 
+
     user->ResetCharacterState();
 
     std::string notification = user->GetUsername() + " joined the room.";
@@ -36,6 +43,26 @@ bool Room::AddUser(std::shared_ptr<User> user)
         << " (Users: " << userCount << ")" << std::endl;
 
     return true;
+}
+
+void Room::ScheduleNextTick()
+{
+    tick_++;
+    Update();
+
+    std::weak_ptr<Room> weakSelf = shared_from_this();
+    using namespace std::chrono_literals;
+    tick_timer_.expires_after(30ms);
+    tick_timer_.async_wait(
+        [weakSelf](const boost::system::error_code& ec) {
+            if (ec) return;
+
+            auto self = weakSelf.lock();
+            if (!self) return;
+
+            self->BroadcastPlayerStates();
+            self->ScheduleNextTick();
+        });
 }
 
 bool Room::RemoveUser(uint32_t user_id)
@@ -273,6 +300,70 @@ std::vector<std::shared_ptr<User>> Room::GetUserList() const
     return user_list;
 }
 
+void Room::AddAttackRequest(uint32_t trigger_id, uint32_t target_id)
+{
+    std::lock_guard<std::mutex> lock(interact_mutex_);
+
+    if (attackRequestMap.count(target_id) > 0) return; 
+
+    AttackRequest attackReq;
+    attackReq.trigger_user_id = trigger_id;
+    attackReq.target_user_id = target_id;
+    attackReq.expire_tick = GetTick() + 10;
+    attackReq.is_parry = false;
+
+    attackRequestMap[target_id] = attackReq;
+    attackRequestQueueByExpireTick.push({ attackReq.expire_tick, target_id });
+}
+
+void Room::TryParry(uint32_t trigger_id)
+{
+    std::lock_guard<std::mutex> lock(interact_mutex_);
+
+    auto it = attackRequestMap.find(trigger_id);
+    if (it != attackRequestMap.end()) {
+        parrySuccessList.push_back(it->second);
+        attackRequestMap.erase(it);
+        std::cout << "attack -> parry" << std::endl;
+    }
+}
+
+void Room::ProcessParry()
+{
+    for (const auto& req : parrySuccessList) {
+        // 패링 성공
+        fixer::NoticePlayerInteract res;
+        res.set_type(2);
+        res.set_trigger_user_id(req.target_user_id);
+        res.set_target_user_id(req.trigger_user_id);
+        SendPacketToAll(fixer::NOTICE_PLAYER_INTERACT, res);
+        std::cout << res.target_user_id() << " attack target" << std::endl;
+    }
+    parrySuccessList.clear();
+}
+
+void Room::ProcessExpiredAttack()
+{
+    uint32_t cur_tick = GetTick();
+    while (!attackRequestQueueByExpireTick.empty() && attackRequestQueueByExpireTick.top().first <= cur_tick) {
+        auto [tick, target_id] = attackRequestQueueByExpireTick.top();
+        attackRequestQueueByExpireTick.pop();
+
+        auto it = attackRequestMap.find(target_id);
+        if (it != attackRequestMap.end()) {
+            // 공격 성공
+            fixer::NoticePlayerInteract res;
+            res.set_type(1); 
+            res.set_trigger_user_id(it->second.trigger_user_id);
+            res.set_target_user_id(it->second.target_user_id);
+            SendPacketToAll(fixer::NOTICE_PLAYER_INTERACT, res);
+
+            std::cout << res.target_user_id() << "parry target" << std::endl;
+            attackRequestMap.erase(it);
+        }
+    }
+}
+
 std::vector<char> Room::BuildPacket(fixer::PacketId pkt_id, const google::protobuf::Message& msg)
 {
     std::string body;
@@ -310,20 +401,3 @@ void Room::SendPacketToSessions(const std::vector<std::shared_ptr<Session>>& ses
     }
 }
 
-void Room::ScheduleNextTick()
-{
-    std::weak_ptr<Room> weakSelf = shared_from_this();
-    
-    using namespace std::chrono_literals;
-    tick_timer_.expires_after(30ms); 
-    tick_timer_.async_wait(
-        [weakSelf](const boost::system::error_code& ec) {
-            if (ec) return;
-
-            auto self = weakSelf.lock();
-            if (!self) return; 
-
-            self->BroadcastPlayerStates();
-            self->ScheduleNextTick();
-        });
-}

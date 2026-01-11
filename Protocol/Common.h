@@ -19,5 +19,15 @@ struct PACKET_HEADER
     std::uint16_t pkt_id;
     std::uint16_t pkt_size;
 };
+
+//Define으로 코드 분할
+struct AttackRequest
+{
+    bool is_parry;
+    uint32_t expire_tick;
+
+    uint32_t trigger_user_id;
+    uint32_t target_user_id;
+};
 #pragma pack(pop)
 

@@ -58,7 +58,8 @@ message ReqGuestLogin {
 // 로그인 응답 (PKT_RES_LOGIN)
 message ResLogin {
   uint32 user_id    = 1;
-  bool   is_success = 2;
+  string user_name  = 2;
+  bool   is_success = 3;
 }
 
 // 로그아웃 요청 (PKT_REQ_LOGOUT)
